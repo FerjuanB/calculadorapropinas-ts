@@ -1,6 +1,7 @@
 import MenuItem from "./components/MenuItem"
 import OrderContents from "./components/OrderContents"
 import { OrderTotals } from "./components/OrderTotals"
+import TipPercentage from "./components/TipPercentage"
 import { menuItems } from "./data/db"
 import useOrder from "./hooks/useOrder"
 
@@ -8,7 +9,7 @@ import useOrder from "./hooks/useOrder"
 
 function App() {
  
-const {order, addItem, removeItem} = useOrder()
+const {order, addItem, tip,setTip,removeItem,placeOrder} = useOrder()
   return (
     <>
 <header className="bg-teal-400 py-5">
@@ -18,7 +19,7 @@ const {order, addItem, removeItem} = useOrder()
 grid md:grid-cols-2" >
   <div className="p-5">
      <h2 className="text-4xl font-black">Menú</h2>
-    <div className="space-y-3 mt-10">
+      <div className="space-y-3 mt-10">
 
       {menuItems.map((item) => (
         <MenuItem 
@@ -27,23 +28,39 @@ grid md:grid-cols-2" >
         addItem={addItem}
         />
         ))}
-    </div>
+      </div>
   </div>
   
   <div className="border border-dashed border-slate-300 p-5 rounded-lg space-y-10 ">
-     <OrderContents
+    {order.length > 0?(
+     <>
+      <OrderContents
      order={order}
      removeItem={removeItem}
+     
      />
 
+<TipPercentage  
+setTip={setTip}
+tip={tip}
+
+/>
+
+
   <OrderTotals 
-    order={order}
+  order={order}
+  tip={tip}
+  placeOrder ={placeOrder}
   />
+     </> 
+    ) :
+    <p className="text-center">La orden está vacía</p>
+
+    }
+    
   </div>
 </main>
-
-
-    </>
+</>
   )
 }
 

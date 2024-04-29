@@ -3,14 +3,21 @@ import { OrderItem } from "../types"
 import formatCurrency from "../helpers"
 
 type OrderTotalsProps = {
-    order: OrderItem[]
+    order: OrderItem[],
+    tip: number,
+    placeOrder : () => void
 }
 
 
-export const OrderTotals = ({order}:OrderTotalsProps) => {
+export const OrderTotals = ({order,tip,placeOrder}:OrderTotalsProps) => {
 
 const subtotalAmount = useMemo(()=>order.reduce((total,item)=>total + (item.quantity*item.price),0 ),[order])
 
+const tipAmount = useMemo(() =>subtotalAmount*tip,[tip, order])
+
+//? si quisiera usar useCallBack por useMemo, que hacen lo mismo debo cambiar las 3 llamadas, y poner useCallBack, y a cada llamada de cada metodo, debo ponerle un parentesis. porque sino tira error, pero hacen exactamente lo mismo. 
+
+const totalAmount = useMemo(()=>subtotalAmount+tipAmount,[order,tip])
   return (
     <>
 <div className="space-y-3">
@@ -18,7 +25,7 @@ const subtotalAmount = useMemo(()=>order.reduce((total,item)=>total + (item.quan
     Totales y Propina:
 </h2>
 <p>
-    Subtotal a pagar: {' '}
+    Subtotal a pagar: {''}
     <span className="font-bold">
  {formatCurrency(subtotalAmount)}
     </span>
@@ -26,19 +33,23 @@ const subtotalAmount = useMemo(()=>order.reduce((total,item)=>total + (item.quan
 <p>
    Propina: {' '}
     <span className="font-bold">
- $0
+    {formatCurrency(tipAmount)}
     </span>
 </p>
 <p>
     Total a pagar: {' '}
     <span className="font-bold">
- $0
+ {formatCurrency(totalAmount)}
     </span>
 </p>
 </div>
 
-<button>
-
+<button 
+className=" w-full bg-black p-3 uppercase text-white font-bold disabled:opacity-20"
+disabled={totalAmount === 0}
+onClick={() => placeOrder()}
+>
+Guardar Orden 
 </button>
     </>
   )
